@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 export default function Reveal({
   children,
@@ -12,7 +13,16 @@ export default function Reveal({
   className?: string;
 }) {
   const reduced = useReducedMotion();
-  if (reduced) return <div className={className}>{children}</div>;
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // المحتوى يبقى مرئياً دائماً من HTML نفسه حتى لو تأخر أو فشل تحميل
+  // JavaScript على الجوال — يمنع صفحة فارغة، والحركة مجرد تحسين إضافي.
+  if (!mounted || reduced) return <div className={className}>{children}</div>;
+
   return (
     <motion.div
       className={className}
